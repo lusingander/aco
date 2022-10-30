@@ -10,12 +10,15 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-func main() {
-	// Create an instance of the app structure
-	app := NewApp()
+func run() error {
+	cfg, err := loadAppConfig()
+	if err != nil {
+		return err
+	}
 
-	// Create application with options
-	err := wails.Run(&options.App{
+	app := NewApp(cfg)
+
+	return wails.Run(&options.App{
 		Title:            "aco",
 		Width:            1024,
 		Height:           768,
@@ -26,8 +29,10 @@ func main() {
 			app,
 		},
 	})
+}
 
-	if err != nil {
+func main() {
+	if err := run(); err != nil {
 		println("Error:", err.Error())
 	}
 }
