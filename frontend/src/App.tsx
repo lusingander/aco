@@ -1,44 +1,16 @@
 import { Button } from "@mui/material";
-import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Box } from "@mui/system";
-import { useEffect, useState } from "react";
-
 import {
   DataGrid,
   GridColDef,
   GridRowsProp,
   GridSelectionModel,
 } from "@mui/x-data-grid";
+import { useEffect, useState } from "react";
 import { Commands, RunCommand } from "../wailsjs/go/main/App";
 import { main } from "../wailsjs/go/models";
-
-const useTextFieldState = () => {
-  const [text, setText] = useState("");
-  const updateText = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
-  };
-  return [text, setText, updateText] as const;
-};
-
-const InOutTextField = (props: {
-  label: string;
-  text: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}) => (
-  <TextField
-    inputProps={{ style: { fontFamily: "monospace" } }}
-    label={props.label}
-    multiline
-    fullWidth
-    minRows={15}
-    maxRows={15}
-    margin="normal"
-    variant="filled"
-    value={props.text}
-    onChange={props.onChange}
-  />
-);
+import { InOutTextField, useTextFieldState } from "./InOutTextField";
 
 const runCommand = (
   input: string,
