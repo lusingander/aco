@@ -69,15 +69,22 @@ function App() {
     <div id="App">
       <Box sx={{ height: 300 }}>
         <DataGrid
+          sx={{
+            "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
+              outline: "none !important",
+            },
+          }}
           rows={rows}
           columns={tableColumns}
           density={"compact"}
           onSelectionModelChange={onRowSelected}
+          hideFooterSelectedRowCount
         />
       </Box>
       <Box textAlign="center">
         <Button
           variant="outlined"
+          disabled={!selected}
           onClick={
             () => runCommand(stdinText, selected, setStdoutText, setStdoutText) // todo: handle error
           }
