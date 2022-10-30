@@ -3,6 +3,7 @@ module github.con/lusingander/aco
 go 1.18
 
 require (
+	github.com/mattn/go-shellwords v1.0.12
 	github.com/wailsapp/wails/v2 v2.1.0
 	gopkg.in/yaml.v3 v3.0.1
 )

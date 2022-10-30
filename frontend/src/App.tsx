@@ -15,10 +15,11 @@ import { InOutTextField, useTextFieldState } from "./InOutTextField";
 const runCommand = (
   input: string,
   command: main.Command | undefined,
-  f: (output: string) => void
+  onSuccess: (output: string) => void,
+  onFailure: (err: string) => void
 ): void => {
   if (command) {
-    RunCommand(input, command).then(f);
+    RunCommand(input, command).then(onSuccess).catch(onFailure);
   }
 };
 
@@ -36,10 +37,15 @@ const commandsToRows = (commands: main.Command[]) =>
   }));
 
 function App() {
-  const [stdinText, , updateStdinText] = useTextFieldState();
+  const [stdinText, setStdinText, updateStdinText] = useTextFieldState();
   const [stdoutText, setStdoutText, updateStdoutText] = useTextFieldState();
   const [rows, setRows] = useState<GridRowsProp>([]);
   const [selected, setSelected] = useState<main.Command | undefined>(undefined);
+
+  const clear = () => {
+    setStdinText("");
+    setStdoutText("");
+  };
 
   useEffect(() => {
     const loadCommands = async () => {
@@ -70,9 +76,14 @@ function App() {
       <Box textAlign="center">
         <Button
           variant="outlined"
-          onClick={() => runCommand(stdinText, selected, setStdoutText)}
+          onClick={
+            () => runCommand(stdinText, selected, setStdoutText, setStdoutText) // todo: handle error
+          }
         >
           Run
+        </Button>
+        <Button variant="outlined" onClick={clear}>
+          Clear
         </Button>
       </Box>
       <Grid container spacing={2}>
