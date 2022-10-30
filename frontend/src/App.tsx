@@ -16,10 +16,19 @@ const runCommand = (
   input: string,
   command: main.Command | undefined,
   onSuccess: (output: string) => void,
-  onFailure: (err: string) => void
+  onFailure: (err: string) => void,
+  error: (failure: boolean) => void
 ): void => {
   if (command) {
-    RunCommand(input, command).then(onSuccess).catch(onFailure);
+    RunCommand(input, command)
+      .then((v) => {
+        onSuccess(v);
+        error(false);
+      })
+      .catch((e) => {
+        onFailure(e);
+        error(true);
+      });
   }
 };
 
@@ -54,6 +63,7 @@ const clearAll = (...fs: ((s: string) => void)[]) => fs.forEach((f) => f(""));
 function App() {
   const [stdinText, setStdinText, updateStdinText] = useTextFieldState();
   const [stdoutText, setStdoutText, updateStdoutText] = useTextFieldState();
+  const [commandError, setCommandError] = useState(false);
   const [selected, setSelected] = useState<main.Command | undefined>(undefined);
   const rows = useCommandRows(commandsToRows);
 
@@ -85,8 +95,14 @@ function App() {
         <Button
           variant="outlined"
           disabled={!selected}
-          onClick={
-            () => runCommand(stdinText, selected, setStdoutText, setStdoutText) // todo: handle error
+          onClick={() =>
+            runCommand(
+              stdinText,
+              selected,
+              setStdoutText,
+              setStdoutText,
+              setCommandError
+            )
           }
         >
           Run
@@ -111,6 +127,7 @@ function App() {
             label="Stdout"
             text={stdoutText}
             onChange={updateStdoutText}
+            error={commandError}
           />
         </Grid>
       </Grid>

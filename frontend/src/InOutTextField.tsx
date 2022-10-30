@@ -13,6 +13,7 @@ export const InOutTextField = (props: {
   label: string;
   text: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: boolean;
 }) => (
   <TextField
     inputProps={{ style: { fontFamily: "monospace" } }}
@@ -23,6 +24,7 @@ export const InOutTextField = (props: {
     maxRows={15}
     margin="normal"
     variant="filled"
+    error={props.error}
     value={props.text}
     onChange={props.onChange}
   />
