@@ -36,24 +36,26 @@ const commandsToRows = (commands: main.Command[]) =>
     cmd: c,
   }));
 
-function App() {
-  const [stdinText, setStdinText, updateStdinText] = useTextFieldState();
-  const [stdoutText, setStdoutText, updateStdoutText] = useTextFieldState();
+const useCommandRows = (convert: (cs: main.Command[]) => GridRowsProp) => {
   const [rows, setRows] = useState<GridRowsProp>([]);
-  const [selected, setSelected] = useState<main.Command | undefined>(undefined);
-
-  const clear = () => {
-    setStdinText("");
-    setStdoutText("");
-  };
-
   useEffect(() => {
     const loadCommands = async () => {
       const cs = await Commands();
-      setRows(commandsToRows(cs));
+      const rows = convert(cs);
+      setRows(rows);
     };
     loadCommands();
   }, []);
+  return rows;
+};
+
+const clearAll = (...fs: ((s: string) => void)[]) => fs.forEach((f) => f(""));
+
+function App() {
+  const [stdinText, setStdinText, updateStdinText] = useTextFieldState();
+  const [stdoutText, setStdoutText, updateStdoutText] = useTextFieldState();
+  const [selected, setSelected] = useState<main.Command | undefined>(undefined);
+  const rows = useCommandRows(commandsToRows);
 
   const onRowSelected = (selected: GridSelectionModel) => {
     if (selected) {
@@ -82,7 +84,10 @@ function App() {
         >
           Run
         </Button>
-        <Button variant="outlined" onClick={clear}>
+        <Button
+          variant="outlined"
+          onClick={() => clearAll(setStdinText, setStdoutText)}
+        >
           Clear
         </Button>
       </Box>
