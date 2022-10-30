@@ -6,6 +6,6 @@ export function Commands() {
   return window['go']['main']['App']['Commands']();
 }
 
-export function ToUpper(arg1) {
-  return window['go']['main']['App']['ToUpper'](arg1);
+export function RunCommand(arg1, arg2) {
+  return window['go']['main']['App']['RunCommand'](arg1, arg2);
 }

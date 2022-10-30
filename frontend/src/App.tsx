@@ -4,8 +4,13 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 
-import { DataGrid, GridColDef, GridRowsProp } from "@mui/x-data-grid";
-import { Commands, ToUpper } from "../wailsjs/go/main/App";
+import {
+  DataGrid,
+  GridColDef,
+  GridRowsProp,
+  GridSelectionModel,
+} from "@mui/x-data-grid";
+import { Commands, RunCommand } from "../wailsjs/go/main/App";
 import { main } from "../wailsjs/go/models";
 
 const useTextFieldState = () => {
@@ -26,8 +31,8 @@ const InOutTextField = (props: {
     label={props.label}
     multiline
     fullWidth
-    minRows={20}
-    maxRows={20}
+    minRows={15}
+    maxRows={15}
     margin="normal"
     variant="filled"
     value={props.text}
@@ -35,8 +40,14 @@ const InOutTextField = (props: {
   />
 );
 
-const runCommand = (input: string, f: (output: string) => void): void => {
-  ToUpper(input).then(f);
+const runCommand = (
+  input: string,
+  command: main.Command | undefined,
+  f: (output: string) => void
+): void => {
+  if (command) {
+    RunCommand(input, command).then(f);
+  }
 };
 
 const tableColumns: GridColDef[] = [
@@ -49,12 +60,14 @@ const commandsToRows = (commands: main.Command[]) =>
     id: i,
     col_desc: c.description,
     col_cmd: c.cmd,
+    cmd: c,
   }));
 
 function App() {
   const [stdinText, , updateStdinText] = useTextFieldState();
   const [stdoutText, setStdoutText, updateStdoutText] = useTextFieldState();
   const [rows, setRows] = useState<GridRowsProp>([]);
+  const [selected, setSelected] = useState<main.Command | undefined>(undefined);
 
   useEffect(() => {
     const loadCommands = async () => {
@@ -64,15 +77,28 @@ function App() {
     loadCommands();
   }, []);
 
+  const onRowSelected = (selected: GridSelectionModel) => {
+    if (selected) {
+      const id = selected[0];
+      const row = rows.find((r) => r.id === id);
+      setSelected(row?.cmd);
+    }
+  };
+
   return (
     <div id="App">
-      <Box sx={{ height: 200 }}>
-        <DataGrid rows={rows} columns={tableColumns} density={"compact"} />
+      <Box sx={{ height: 300 }}>
+        <DataGrid
+          rows={rows}
+          columns={tableColumns}
+          density={"compact"}
+          onSelectionModelChange={onRowSelected}
+        />
       </Box>
       <Box textAlign="center">
         <Button
           variant="outlined"
-          onClick={() => runCommand(stdinText, setStdoutText)}
+          onClick={() => runCommand(stdinText, selected, setStdoutText)}
         >
           Run
         </Button>

@@ -4,4 +4,4 @@ import {main} from '../models';
 
 export function Commands():Promise<Array<main.Command>>;
 
-export function ToUpper(arg1:string):Promise<string>;
+export function RunCommand(arg1:string,arg2:main.Command):Promise<string>;
