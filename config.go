@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 
@@ -17,15 +18,6 @@ type Command struct {
 	Description string `json:"description"`
 }
 
-func configFilePath() (string, error) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
-	}
-	path := filepath.Join(home, ".config", "aco", "aco.yaml")
-	return path, nil
-}
-
 func loadAppConfig() (*AppConfig, error) {
 	path, err := configFilePath()
 	if err != nil {
@@ -38,10 +30,22 @@ func loadAppConfig() (*AppConfig, error) {
 	}
 	defer f.Close()
 
+	return decodeConfig(f)
+}
+
+func configFilePath() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	path := filepath.Join(home, ".config", "aco", "aco.yaml")
+	return path, nil
+}
+
+func decodeConfig(r io.Reader) (*AppConfig, error) {
 	ac := &AppConfig{}
-	if err := yaml.NewDecoder(f).Decode(ac); err != nil {
+	if err := yaml.NewDecoder(r).Decode(ac); err != nil {
 		return nil, err
 	}
-
 	return ac, nil
 }
