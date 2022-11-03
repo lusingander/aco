@@ -40,28 +40,34 @@ function App() {
       <Box sx={{ height: 300 }}>
         <CommandsTable rows={rows} onRowSelected={onRowSelected} />
       </Box>
-      <Box textAlign="center">
-        <Button
-          variant="outlined"
-          disabled={!selected}
-          onClick={() =>
-            runCommand(
-              stdinText,
-              selected,
-              setStdoutText,
-              setStdoutText,
-              setCommandError
-            )
-          }
-        >
-          Run
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={() => clearAll(setStdinText, setStdoutText)}
-        >
-          Clear
-        </Button>
+      <Box
+        sx={{ display: "flex", flexDirection: "row", justifyContent: "center" }}
+      >
+        <Box sx={{ mt: 1, mb: 0, mx: 2 }}>
+          <Button
+            variant="contained"
+            disabled={!selected}
+            onClick={() =>
+              runCommand(
+                stdinText,
+                selected,
+                setStdoutText,
+                setStdoutText,
+                setCommandError
+              )
+            }
+          >
+            Run
+          </Button>
+        </Box>
+        <Box sx={{ mt: 1, mb: 0, mx: 2 }}>
+          <Button
+            variant="contained"
+            onClick={() => clearAll(setStdinText, setStdoutText)}
+          >
+            Clear
+          </Button>
+        </Box>
       </Box>
       <Grid container spacing={2}>
         <Grid xs={6}>
