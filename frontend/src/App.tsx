@@ -37,7 +37,7 @@ function App() {
 
   return (
     <div id="App">
-      <Box sx={{ height: 300 }}>
+      <Box sx={{ height: 300, mt: 1, mx: 2 }}>
         <CommandsTable rows={rows} onRowSelected={onRowSelected} />
       </Box>
       <Box
@@ -69,23 +69,25 @@ function App() {
           </Button>
         </Box>
       </Box>
-      <Grid container spacing={2}>
-        <Grid xs={6}>
-          <InOutTextField
-            label="Stdin"
-            text={stdinText}
-            onChange={updateStdinText}
-          />
+      <Box sx={{ mt: -1, mx: 2 }}>
+        <Grid container spacing={2}>
+          <Grid xs={6}>
+            <InOutTextField
+              label="Stdin"
+              text={stdinText}
+              onChange={updateStdinText}
+            />
+          </Grid>
+          <Grid xs={6}>
+            <InOutTextField
+              label="Stdout"
+              text={stdoutText}
+              onChange={updateStdoutText}
+              error={commandError}
+            />
+          </Grid>
         </Grid>
-        <Grid xs={6}>
-          <InOutTextField
-            label="Stdout"
-            text={stdoutText}
-            onChange={updateStdoutText}
-            error={commandError}
-          />
-        </Grid>
-      </Grid>
+      </Box>
     </div>
   );
 }
