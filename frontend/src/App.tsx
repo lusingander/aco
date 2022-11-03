@@ -37,11 +37,19 @@ const tableColumns: GridColDef[] = [
   { field: "col_cmd", headerName: "Command", width: 500 },
 ];
 
+const cmdStr = (command: main.Command) => {
+  if (command.pipeline) {
+    return command.pipeline.join(" | ");
+  } else {
+    return command.cmd;
+  }
+};
+
 const commandsToRows = (commands: main.Command[]) =>
   commands.map((c, i) => ({
     id: i,
     col_desc: c.description,
-    col_cmd: c.cmd,
+    col_cmd: cmdStr(c),
     cmd: c,
   }));
 

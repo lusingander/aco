@@ -14,8 +14,9 @@ type AppConfig struct {
 
 // json tag is required to output models.ts :(
 type Command struct {
-	Cmd         string `json:"cmd"`
-	Description string `json:"description"`
+	Cmd         string   `json:"cmd"`
+	Pipeline    []string `json:"pipeline"`
+	Description string   `json:"description"`
 }
 
 func loadAppConfig() (*AppConfig, error) {
