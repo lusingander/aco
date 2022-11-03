@@ -1,15 +1,10 @@
 import { Button } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Box } from "@mui/system";
-import {
-  DataGrid,
-  GridColDef,
-  GridRowsProp,
-  GridSelectionModel,
-} from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
-import { Commands, RunCommand } from "../wailsjs/go/main/App";
+import { useState } from "react";
+import { RunCommand } from "../wailsjs/go/main/App";
 import { main } from "../wailsjs/go/models";
+import { CommandsTable, useCommandRows } from "./CommandsTable";
 import { InOutTextField, useTextFieldState } from "./InOutTextField";
 
 const runCommand = (
@@ -32,72 +27,18 @@ const runCommand = (
   }
 };
 
-const tableColumns: GridColDef[] = [
-  { field: "col_desc", headerName: "Description", width: 300 },
-  { field: "col_cmd", headerName: "Command", width: 500 },
-];
-
-const cmdStr = (command: main.Command) => {
-  if (command.pipeline) {
-    return command.pipeline.join(" | ");
-  } else {
-    return command.cmd;
-  }
-};
-
-const commandsToRows = (commands: main.Command[]) =>
-  commands.map((c, i) => ({
-    id: i,
-    col_desc: c.description,
-    col_cmd: cmdStr(c),
-    cmd: c,
-  }));
-
-const useCommandRows = (convert: (cs: main.Command[]) => GridRowsProp) => {
-  const [rows, setRows] = useState<GridRowsProp>([]);
-  useEffect(() => {
-    const loadCommands = async () => {
-      const cs = await Commands();
-      const rows = convert(cs);
-      setRows(rows);
-    };
-    loadCommands();
-  }, []);
-  return rows;
-};
-
 const clearAll = (...fs: ((s: string) => void)[]) => fs.forEach((f) => f(""));
 
 function App() {
   const [stdinText, setStdinText, updateStdinText] = useTextFieldState();
   const [stdoutText, setStdoutText, updateStdoutText] = useTextFieldState();
   const [commandError, setCommandError] = useState(false);
-  const [selected, setSelected] = useState<main.Command | undefined>(undefined);
-  const rows = useCommandRows(commandsToRows);
-
-  const onRowSelected = (selected: GridSelectionModel) => {
-    if (selected) {
-      const id = selected[0];
-      const row = rows.find((r) => r.id === id);
-      setSelected(row?.cmd);
-    }
-  };
+  const [rows, selected, onRowSelected] = useCommandRows();
 
   return (
     <div id="App">
       <Box sx={{ height: 300 }}>
-        <DataGrid
-          sx={{
-            "&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
-              outline: "none !important",
-            },
-          }}
-          rows={rows}
-          columns={tableColumns}
-          density={"compact"}
-          onSelectionModelChange={onRowSelected}
-          hideFooterSelectedRowCount
-        />
+        <CommandsTable rows={rows} onRowSelected={onRowSelected} />
       </Box>
       <Box textAlign="center">
         <Button

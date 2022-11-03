@@ -1,5 +1,5 @@
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export const useTextFieldState = () => {
   const [text, setText] = useState("");
@@ -9,23 +9,30 @@ export const useTextFieldState = () => {
   return [text, setText, updateText] as const;
 };
 
-export const InOutTextField = (props: {
+type InOutTextFieldProps = {
   label: string;
   text: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: boolean;
+};
+
+export const InOutTextField: React.FC<InOutTextFieldProps> = ({
+  label,
+  text,
+  onChange,
+  error,
 }) => (
   <TextField
     inputProps={{ style: { fontFamily: "monospace" } }}
-    label={props.label}
+    label={label}
     multiline
     fullWidth
     minRows={15}
     maxRows={15}
     margin="normal"
     variant="filled"
-    error={props.error}
-    value={props.text}
-    onChange={props.onChange}
+    error={error}
+    value={text}
+    onChange={onChange}
   />
 );
